@@ -7,15 +7,35 @@ import { Heading } from "~/components/ui/heading";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { Textarea } from "~/components/ui/textarea";
+import { useEffect, useState } from "react";
+import { type Plan } from "types/client";
 
 const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
   clientId,
   planId,
 }) => {
+  const [plan, setPlan] = useState<Plan | null>(null)
   const { data } = api.client.getClientPlan.useQuery({ clientId, planId });
-  if (!data) return <div>No Plan Found</div>;
-  const { plan } = data;
+  useEffect(() => {
+    if(data?.plan) {
+      setPlan(data.plan)
+    }
+  }, [data])
+  if (!plan) return <div>No Plan Found</div>;
+  const updateActivity = (id: string, value: string) => {
+    const updatedActivityList = [...plan.activityList];
+    const index = updatedActivityList.findIndex(
+      (item) => item.id === id
+    );
+    if (index !== -1 && updatedActivityList[index]) {
+      // why use a ! mark instead of a ?
+      // https://stackoverflow.com/questions/58414515/typescript-3-7beta-optional-chaining-operator-using-problem
+      updatedActivityList[index]!.note = value;
 
+      setPlan({...plan, activityList: [...updatedActivityList]});
+    }
+  }
+  
   return (
     <>
       <Head>
@@ -26,7 +46,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
       <Heading title={plan.name} description={plan.description} />
       <span>{plan.status}</span>
       </div>
-      <ActivityDisplay plan={plan} />
+      <ActivityDisplay plan={plan} onActivityUpdate={updateActivity}/>
       <Textarea 
         value={plan.note ?? ''}
       />

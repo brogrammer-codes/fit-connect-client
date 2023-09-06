@@ -15,10 +15,7 @@ import { Label } from "~/components/ui/label";
 import { ActivityStatus } from "types/status";
 import { Button } from "~/components/ui/button";
 
-export const ActivityDisplay: React.FC<{ plan: Plan }> = ({ plan }) => {
-  const onActivityChange = (id: string, value: string) => {
-    console.log(id, value);
-  };
+export const ActivityDisplay: React.FC<{ plan: Plan, onActivityUpdate: (id: string, value: string) => void }> = ({ plan, onActivityUpdate }) => {
   return (
     <div className="flex flex-col space-y-2">
       {plan.activityList.map((activity) => (
@@ -55,7 +52,7 @@ export const ActivityDisplay: React.FC<{ plan: Plan }> = ({ plan }) => {
                 <Textarea
                   id="notes"
                   onChange={(event) =>
-                    onActivityChange(activity.id, event.target.value)
+                    onActivityUpdate(activity.id, event.target.value)
                   }
                   value={activity.note ?? ""}
                   className="rounded bg-slate-200 placeholder:text-slate-400"
