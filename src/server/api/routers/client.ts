@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Plan, type Client } from "types/client";
+import { type Plan, type Client } from "types/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
