@@ -2,7 +2,7 @@ import type { NextPage, GetStaticProps } from "next";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { api } from "~/utils/api";
 import Head from "next/head";
-import { ActivityDisplay } from "../../components/activity-display";
+import { ActivityDisplay } from "../../../../components/activity-display";
 import { Heading } from "~/components/ui/heading";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
