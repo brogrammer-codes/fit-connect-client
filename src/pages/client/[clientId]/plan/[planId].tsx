@@ -12,6 +12,7 @@ import { ActivityUpdateModal } from "components/activity-update-modal";
 import { ActivityStatus, PlanStatus } from "types/status";
 import { PlanUpdateModal } from "components/plan-update-modal";
 import { Button } from "components/ui/button";
+import { StatusPill } from "components/status-pill";
 
 const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
   clientId,
@@ -114,9 +115,11 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
       </Link>
       <div className="flex justify-between">
         <Heading title={plan.name} description={plan.description} />
-        <span>{plan.status}</span>
+        <StatusPill status={plan.status}/>
       </div>
       <ActivityDisplay plan={plan} openActivityModal={openActivityModal} />
+      <span className="font-semibold">Plan Notes</span>
+              <span className="text-sm">{plan.note}</span>
       <Button
         className=" rounded bg-emerald-600 p-2 font-semibold hover:bg-emerald-900 hover:text-neutral-300"
         disabled={plan.status === PlanStatus.COMPLETE}

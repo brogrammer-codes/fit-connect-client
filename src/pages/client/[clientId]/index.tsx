@@ -30,7 +30,7 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
 
       <span className="text-3xl font-semibold">Welcome {client.name}</span>
       <span className="text-xl">Achieve Your Fitness Goals, Your Way</span>
-      <Card className="rounded border-none bg-lime-900 max-w-fit">
+      <Card className="rounded border-none bg-lime-900">
         <CardHeader>
           <CardTitle>{`Upcoming plans (${assignedPlans.length})`}</CardTitle>
           <CardDescription>
@@ -44,7 +44,7 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
               <Link
                 key={plan.id}
                 href={`/client/${clientId}/plan/${plan.id}`}
-                className="m-x-1 flex justify-between rounded p-2 text-xl font-semibold hover:bg-green-700"
+                className="m-x-1 flex justify-between rounded p-2 px-3 text-xl font-semibold hover:bg-green-700 bg-green-800"
               >
                 <span>{plan.name}</span>
                 <span>Activities: {plan.activityList.length}</span>
@@ -67,7 +67,7 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
               <Link
                 key={plan.id}
                 href={`/client/${clientId}/plan/${plan.id}`}
-                className="m-x-1 rounded p-2 text-xl font-semibold hover:bg-green-700"
+                className="m-x-1 rounded p-2 px-3 text-xl font-semibold hover:bg-sky-700 bg-sky-800"
               >
                 {plan.name}
               </Link>

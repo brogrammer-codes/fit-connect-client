@@ -34,14 +34,13 @@ export const PlanUpdateModal: React.FC<PlanUpdateModalProps> = ({
     >
       <div>
         <Label htmlFor="notes">Notes</Label>
-        <div className="flex">
+        <div className="flex space-x-1">
           <Textarea
             id="notes"
             onChange={(event) =>
               updatePlanNote(event.target.value)
             }
             value={plan.note ?? ""}
-            className="rounded bg-slate-200 placeholder:text-slate-400"
             placeholder="10, 10, 12. Felt easy..."
             disabled={plan.status === PlanStatus.COMPLETE}
           />

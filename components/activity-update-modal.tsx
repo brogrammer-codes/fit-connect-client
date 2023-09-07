@@ -34,14 +34,13 @@ export const ActivityUpdateModal: React.FC<ActivityUpdateModalProps> = ({
     >
       <div>
         <Label htmlFor="notes">Notes</Label>
-        <div className="flex">
+        <div className="flex space-x-1">
           <Textarea
             id="notes"
             onChange={(event) =>
               updateActivityNote(activity.id, event.target.value)
             }
             value={activity.note ?? ""}
-            className="rounded bg-slate-200 placeholder:text-slate-400"
             placeholder="10, 10, 12. Felt easy..."
             disabled={activity.status === ActivityStatus.COMPLETE}
           />

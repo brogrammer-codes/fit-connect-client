@@ -12,6 +12,7 @@ import { VideoIcon } from "lucide-react";
 import { type Plan } from "types/client";
 import { Button } from "components/ui/button";
 import { ActivityStatus } from "types/status";
+import { StatusPill } from "./status-pill";
 
 export const ActivityDisplay: React.FC<{
   plan: Plan;
@@ -33,7 +34,7 @@ export const ActivityDisplay: React.FC<{
               </CardTitle>
               <CardDescription>{activity.description}</CardDescription>
             </div>
-            <span className="p-2 text-sm">{activity.status}</span>
+            <StatusPill status={activity.status}/>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
