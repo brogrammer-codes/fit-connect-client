@@ -9,11 +9,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
+} from "components/ui/card";
 import Link from "next/link";
 
 const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
-  const { data } = api.client.getClient.useQuery({ clientId });
+  const { data } = api.clients.getClient.useQuery({ clientId });
   if (!data) return <div>No Client with that ID</div>;
   const { client } = data;
   const assignedPlans = data.client.planList.filter(
@@ -30,7 +30,7 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
 
       <span className="text-3xl font-semibold">Welcome {client.name}</span>
       <span className="text-xl">Achieve Your Fitness Goals, Your Way</span>
-      <Card className="rounded border-none bg-lime-900">
+      <Card className="rounded border-none bg-lime-900 max-w-fit">
         <CardHeader>
           <CardTitle>{`Upcoming plans (${assignedPlans.length})`}</CardTitle>
           <CardDescription>
@@ -82,7 +82,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = generateSSGHelper();
   const clientId = context.params?.clientId;
   if (typeof clientId !== "string") throw new Error("no client id");
-  await ssg.client.getClient.prefetch({ clientId });
+  await ssg.clients.getClient.prefetch({ clientId });
   return {
     props: {
       trpcState: ssg.dehydrate(),

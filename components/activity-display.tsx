@@ -5,17 +5,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
+} from "components/ui/card";
 import Link from "next/link";
 import { Tags } from "types/plan";
-import { Send, VideoIcon } from "lucide-react";
+import { VideoIcon } from "lucide-react";
 import { type Plan } from "types/client";
-import { Textarea } from "~/components/ui/textarea";
-import { Label } from "~/components/ui/label";
+import { Button } from "components/ui/button";
 import { ActivityStatus } from "types/status";
-import { Button } from "~/components/ui/button";
 
-export const ActivityDisplay: React.FC<{ plan: Plan, onActivityUpdate: (id: string, value: string) => void }> = ({ plan, onActivityUpdate }) => {
+export const ActivityDisplay: React.FC<{
+  plan: Plan;
+  openActivityModal: (id: string) => void;
+}> = ({ plan, openActivityModal }) => {
   return (
     <div className="flex flex-col space-y-2">
       {plan.activityList.map((activity) => (
@@ -47,31 +48,16 @@ export const ActivityDisplay: React.FC<{ plan: Plan, onActivityUpdate: (id: stri
           </CardContent>
           <CardFooter>
             <div className="flex w-full flex-col space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <div className="flex space-x-2">
-                <Textarea
-                  id="notes"
-                  onChange={(event) =>
-                    onActivityUpdate(activity.id, event.target.value)
-                  }
-                  value={activity.note ?? ""}
-                  className="rounded bg-slate-200 placeholder:text-slate-400"
-                  placeholder="10, 10, 12. Felt easy..."
-                  disabled={activity.status === ActivityStatus.COMPLETE}
-                />
-                <Button
-                  disabled={activity.status === ActivityStatus.COMPLETE}
-                  className="my-1 rounded bg-slate-100 px-1 text-slate-800 hover:text-emerald-600"
-                  size="icon"
-                >
-                  <Send className="h-5 w-5"/>
-                </Button>
-                {/* <button
-                  className="my-1 rounded bg-slate-100 px-1 text-slate-800 hover:text-emerald-600"
-                  disabled={activity.status === ActivityStatus.COMPLETE}
-                >
-                </button> */}
-              </div>
+              <span className="font-semibold">Activity Note</span>
+              <span className="text-sm">{activity.note}</span>
+              <Button
+                variant={"ghost"}
+                className="rounded bg-slate-400 text-lg font-semibold hover:bg-slate-600 hover:text-slate-100"
+                onClick={() => openActivityModal(activity.id)}
+                disabled={activity.status === ActivityStatus.COMPLETE}
+              >
+                Finish Activity/Add Note
+              </Button>
             </div>
           </CardFooter>
         </Card>
