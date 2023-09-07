@@ -1,34 +1,34 @@
 import { Modal } from "components/ui/modal";
 import { Textarea } from "components/ui/textarea";
-import { type Activity } from "types/client";
+import { type Plan } from "types/client";
 import { Label } from "components/ui/label";
-import { ActivityStatus } from "types/status";
+import { PlanStatus } from "types/status";
 import { Send } from "lucide-react";
 
-interface ActivityUpdateModalProps {
+interface PlanUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  updateActivityNote: (id: string, value: string) => void;
+  updatePlanNote: (value: string) => void;
   loading?: boolean;
-  activity?: Activity | null;
+  plan?: Plan | null;
 }
 
-export const ActivityUpdateModal: React.FC<ActivityUpdateModalProps> = ({
+export const PlanUpdateModal: React.FC<PlanUpdateModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
   loading,
-  activity,
-  updateActivityNote,
+  plan,
+  updatePlanNote,
 }) => {
-  if ( !activity) {
+  if ( !plan) {
     return null;
   }  
   return (
     <Modal
-      title={`Do you want to complete ${activity.name}?`}
-      description="You can complete this activity once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the activity and leave feedback for your coach!"
+      title={`Do you want to complete ${plan.name}?`}
+      description="You can complete this plan once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the plan and leave feedback for your coach! Note: This will complete any activities in the plan as well."
       isOpen={isOpen}
       onClose={onClose}
     >
@@ -38,15 +38,15 @@ export const ActivityUpdateModal: React.FC<ActivityUpdateModalProps> = ({
           <Textarea
             id="notes"
             onChange={(event) =>
-              updateActivityNote(activity.id, event.target.value)
+              updatePlanNote(event.target.value)
             }
-            value={activity.note ?? ""}
+            value={plan.note ?? ""}
             className="rounded bg-slate-200 placeholder:text-slate-400"
             placeholder="10, 10, 12. Felt easy..."
-            disabled={activity.status === ActivityStatus.COMPLETE}
+            disabled={plan.status === PlanStatus.COMPLETE}
           />
           <button
-            disabled={activity.status === ActivityStatus.COMPLETE || loading}
+            disabled={plan.status === PlanStatus.COMPLETE || loading}
             className="hover:rounded-r-xl bg-slate-100 p-1 text-slate-800 hover:text-emerald-600 hover:bg-slate-300 px-2"
             onClick={onConfirm}
           >

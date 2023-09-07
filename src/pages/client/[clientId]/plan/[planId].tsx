@@ -6,11 +6,12 @@ import { ActivityDisplay } from "components/activity-display";
 import { Heading } from "components/ui/heading";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import { Textarea } from "components/ui/textarea";
 import { useEffect, useState } from "react";
 import type { Activity, Plan } from "types/client";
 import { ActivityUpdateModal } from "components/activity-update-modal";
-import { ActivityStatus } from "types/status";
+import { ActivityStatus, PlanStatus } from "types/status";
+import { PlanUpdateModal } from "components/plan-update-modal";
+import { Button } from "components/ui/button";
 
 const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
   clientId,
@@ -18,18 +19,30 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
 }) => {
   const ctx = api.useContext();
   const [plan, setPlan] = useState<Plan | null>(null);
+  const [showPlanModal, setShowPlanModal] = useState<boolean>(false);
   const [activityModalControl, setActivityModalControl] =
     useState<Activity | null>(null);
   const { data } = api.clients.getClientPlan.useQuery({ clientId, planId });
-  const { mutate } = api.activity.updateActivity.useMutation({
-    onSuccess: () => {
-      void ctx.clients.getClientPlan.invalidate();
-      setActivityModalControl(null);
-    },
-    onError: () => {
-      setActivityModalControl(null);
-    }
-  });
+  const { mutate: updateActivity, isLoading } =
+    api.clients.updateClientActivity.useMutation({
+      onSuccess: () => {
+        void ctx.clients.getClientPlan.invalidate();
+        setActivityModalControl(null);
+      },
+      onError: () => {
+        setActivityModalControl(null);
+      },
+    });
+  const { mutate: updatePlan, isLoading: planLoading } =
+    api.clients.updateClientPlan.useMutation({
+      onSuccess: () => {
+        void ctx.clients.getClientPlan.invalidate();
+        setShowPlanModal(false);
+      },
+      onError: () => {
+        setShowPlanModal(false);
+      },
+    });
   useEffect(() => {
     if (data?.plan) {
       setPlan(data.plan);
@@ -53,15 +66,27 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     );
     if (selectedActivity) setActivityModalControl(selectedActivity);
   };
+
   const closeActivityModal = (complete: boolean) => {
     if (activityModalControl) {
-      mutate({
+      updateActivity({
         clientId,
         activityId: activityModalControl?.id,
         note: activityModalControl.note ?? "",
-        status: complete? ActivityStatus.COMPLETE : activityModalControl.status,
+        status: complete
+          ? ActivityStatus.COMPLETE
+          : activityModalControl.status,
       });
     }
+  };
+
+  const closePlanModal = (complete: boolean) => {
+    updatePlan({
+      clientId,
+      planId,
+      note: plan.note ?? "",
+      status: complete ? PlanStatus.COMPLETE : plan.status,
+    });
   };
   return (
     <>
@@ -73,7 +98,16 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
         onClose={() => closeActivityModal(false)}
         onConfirm={() => closeActivityModal(true)}
         updateActivityNote={updateActivityNote}
-        activity={plan.activityList[0]}
+        activity={activityModalControl}
+        loading={isLoading}
+      />
+      <PlanUpdateModal
+        isOpen={showPlanModal}
+        plan={plan}
+        onClose={() => closePlanModal(false)}
+        onConfirm={() => closePlanModal(true)}
+        updatePlanNote={(value) => setPlan({ ...plan, note: value })}
+        loading={planLoading}
       />
       <Link href={`/client/${clientId}`}>
         <ArrowLeftIcon />
@@ -83,7 +117,13 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
         <span>{plan.status}</span>
       </div>
       <ActivityDisplay plan={plan} openActivityModal={openActivityModal} />
-      <Textarea value={plan.note ?? ""} />
+      <Button
+        className=" rounded bg-emerald-600 p-2 font-semibold hover:bg-emerald-900 hover:text-neutral-300"
+        disabled={plan.status === PlanStatus.COMPLETE}
+        onClick={() => setShowPlanModal(true)}
+      >
+        Complete Plan
+      </Button>
     </>
   );
 };
