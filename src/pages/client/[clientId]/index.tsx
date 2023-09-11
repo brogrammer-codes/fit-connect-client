@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "components/ui/card";
 import Link from "next/link";
+import { Heading } from "components/ui/heading";
 
 const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
   const { data } = api.clients.getClient.useQuery({ clientId });
@@ -22,6 +23,7 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
   const completedPlans = data.client.planList.filter(
     (plan) => plan.status === PlanStatus.COMPLETE,
   );
+
   return (
     <>
       <Head>
@@ -30,51 +32,69 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
 
       <span className="text-3xl font-semibold">Welcome {client.name}</span>
       <span className="text-xl">Achieve Your Fitness Goals, Your Way</span>
-      <Card className="rounded border-none bg-lime-900">
-        <CardHeader>
-          <CardTitle>{`Upcoming plans (${assignedPlans.length})`}</CardTitle>
-          <CardDescription>
-            Your assigned plans, click on a plan to see more details and record
-            your workout.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-2 p-2">
-            {assignedPlans.map((plan) => (
-              <Link
-                key={plan.id}
-                href={`/client/${clientId}/plan/${plan.id}`}
-                className="m-x-1 flex justify-between rounded p-2 px-3 text-xl font-semibold hover:bg-green-700 bg-green-800"
-              >
-                <span>{plan.name}</span>
-                <span>Activities: {plan.activityList.length}</span>
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="rounded border-none bg-sky-900">
-        <CardHeader>
-          <CardTitle>{`Completed plans (${completedPlans.length})`}</CardTitle>
-          <CardDescription>
-            Workouts you have already finished, click on them to view more
-            details.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-2 p-2">
-            {completedPlans.map((plan) => (
-              <Link
-                key={plan.id}
-                href={`/client/${clientId}/plan/${plan.id}`}
-                className="m-x-1 rounded p-2 px-3 text-xl font-semibold hover:bg-sky-700 bg-sky-800"
-              >
-                {plan.name}
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col space-y-3">
+        <Heading
+          title={`Upcoming plans (${assignedPlans.length})`}
+          description="Workout plans that have been assigned to you to complete, click on a plan to get started!"
+        />
+        <div className="">
+          {assignedPlans.length > 0 ? (
+            <div className="flex flex-col space-y-1">
+              {assignedPlans.map((plan) => (
+                <Link
+                  key={plan.id}
+                  href={`/client/${clientId}/plan/${plan.id}`}
+                >
+                  <Card className=" max-w-lg">
+                    <CardHeader>
+                      <CardTitle>{plan.name}</CardTitle>
+                      <CardDescription>{plan.description}</CardDescription>
+                      <CardContent>
+                        <ul>
+                          {plan.activityList.map((activity) => (
+                            <li key={activity.id}>{activity.name}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <span> You have no upcoming plans</span>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col space-y-3">
+        <Heading
+          title={`Completed plans (${completedPlans.length})`}
+          description="Workouts you have already completed, click on the plan to view more details."
+        />
+        <div className="">
+          {completedPlans.length > 0 ? (
+            <div className="flex flex-col space-y-1">
+              {completedPlans.map((plan) => (
+                <Link
+                  key={plan.id}
+                  href={`/client/${clientId}/plan/${plan.id}`}
+                >
+                  <Card className=" max-w-lg">
+                    <CardHeader>
+                      <CardTitle className="text-md font-normal text-slate-600">
+                        {plan.name}
+                      </CardTitle>
+                      <CardDescription>{plan.note}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <span> You have no completed plans</span>
+          )}
+        </div>
+      </div>
     </>
   );
 };

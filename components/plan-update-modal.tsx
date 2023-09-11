@@ -41,7 +41,7 @@ export const PlanUpdateModal: React.FC<PlanUpdateModalProps> = ({
               updatePlanNote(event.target.value)
             }
             value={plan.note ?? ""}
-            placeholder="10, 10, 12. Felt easy..."
+            placeholder="I was able to complete most of the exercises with moderate difficulty..."
             disabled={plan.status === PlanStatus.COMPLETE}
           />
           <button

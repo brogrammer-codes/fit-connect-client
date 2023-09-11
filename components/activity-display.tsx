@@ -20,8 +20,8 @@ export const ActivityDisplay: React.FC<{
 }> = ({ plan, openActivityModal }) => {
   return (
     <div className="flex flex-col space-y-2">
-      {plan.activityList.map((activity) => (
-        <Card key={activity.id} className="rounded border-none bg-slate-300">
+      {plan.activityList.map((activity) => activity.name.length ? (
+        <Card key={activity.id} className="rounded border-none bg-slate-300 max-w-lg">
           <CardHeader className="flex flex-row justify-between">
             <div className="flex flex-col">
               <CardTitle className="flex flex-row justify-between">
@@ -49,7 +49,7 @@ export const ActivityDisplay: React.FC<{
           </CardContent>
           <CardFooter>
             <div className="flex w-full flex-col space-y-2">
-              <span className="font-semibold">Activity Note</span>
+              <span className="font-semibold text-sm text-slate-500">Your Notes</span>
               <span className="text-sm">{activity.note}</span>
               <Button
                 variant={"ghost"}
@@ -62,7 +62,7 @@ export const ActivityDisplay: React.FC<{
             </div>
           </CardFooter>
         </Card>
-      ))}
+      ) : null)}
     </div>
   );
 };
