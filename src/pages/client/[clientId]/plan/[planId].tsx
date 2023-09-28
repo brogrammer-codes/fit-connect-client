@@ -50,17 +50,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     }
   }, [data]);
   if (!plan) return <div>No Plan Found</div>;
-  const updateActivityNote = (id: string, value: string) => {
-    const updatedActivityList = [...plan.activityList];
-    const index = updatedActivityList.findIndex((item) => item.id === id);
-    if (index !== -1 && updatedActivityList[index]) {
-      // why use a ! mark instead of a ?
-      // https://stackoverflow.com/questions/58414515/typescript-3-7beta-optional-chaining-operator-using-problem
-      updatedActivityList[index]!.note = value;
 
-      setPlan({ ...plan, activityList: [...updatedActivityList] });
-    }
-  };
   const openActivityModal = (id: string) => {
     const selectedActivity = plan.activityList.find(
       (activity) => activity.id === id,
@@ -68,12 +58,12 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     if (selectedActivity) setActivityModalControl(selectedActivity);
   };
 
-  const closeActivityModal = (complete: boolean) => {
+  const closeActivityModal = (note: string, complete: boolean) => {
     if (activityModalControl) {
       updateActivity({
         clientId,
         activityId: activityModalControl?.id,
-        note: activityModalControl.note ?? "",
+        note: note,
         status: complete
           ? ActivityStatus.COMPLETE
           : activityModalControl.status,
@@ -96,9 +86,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
       </Head>
       <ActivityUpdateModal
         isOpen={!!activityModalControl}
-        onClose={() => closeActivityModal(false)}
-        onConfirm={() => closeActivityModal(true)}
-        updateActivityNote={updateActivityNote}
+        onClose={closeActivityModal}
         activity={activityModalControl}
         loading={isLoading}
       />
