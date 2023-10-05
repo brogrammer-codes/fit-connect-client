@@ -10,7 +10,7 @@ import {
 } from "components/ui/form";
 import { Modal } from "components/ui/modal";
 import { Textarea } from "components/ui/textarea";
-import { type Activity } from "types/client";
+import type { Plan, Activity } from "types/client";
 import { Label } from "components/ui/label";
 import { ActivityStatus } from "types/status";
 import { CheckCircle, Send } from "lucide-react";
@@ -21,49 +21,51 @@ import { useEffect } from "react";
 const formSchema = z.object({
   note: z.string().min(0),
 });
-type ActivityFormValues = z.infer<typeof formSchema>;
+type NoteFormValues = z.infer<typeof formSchema>;
 
-interface ActivityUpdateModalProps {
+interface NoteUpdateModalProps {
   isOpen: boolean;
   onClose: (note: string, complete: boolean) => void;
+  description: string;
   loading?: boolean;
-  activity?: Activity | null;
+  initialData?: Activity | null | Plan;
 }
 
-export const ActivityUpdateModal: React.FC<ActivityUpdateModalProps> = ({
+export const NoteUpdateModal: React.FC<NoteUpdateModalProps> = ({
   isOpen,
   onClose,
   loading,
-  activity,
+  initialData,
+  description,
 }) => {
-  const form = useForm<ActivityFormValues>({
+  const form = useForm<NoteFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       note: "",
     },
   });
   useEffect(() => {
-    if (activity?.note) {
-      form.setValue("note", activity.note);
+    if (initialData?.note) {
+      form.setValue("note", initialData.note);
     }
-
     return () => {
       form.reset();
     };
-  }, [activity, form]);
-  const onSubmit = (data: ActivityFormValues) => {
+  }, [initialData, form]);
+
+  const onSubmit = (data: NoteFormValues) => {
     onClose(data.note, true);
   };
   const closeModal = () => {
     onClose(form.getValues("note"), false);
   };
-  if (!activity) {
+  if (!initialData) {
     return null;
   }
   return (
     <Modal
-      title={`Do you want to complete ${activity.name}?`}
-      description="You can complete this activity once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the activity and leave feedback for your coach!"
+      title={`Do you want to complete or add notes to ${initialData.name}?`}
+      description={description}
       isOpen={isOpen}
       onClose={closeModal}
     >
@@ -87,7 +89,9 @@ export const ActivityUpdateModal: React.FC<ActivityUpdateModalProps> = ({
                     <FormControl className="flex gap-2">
                       <Textarea
                         placeholder="10, 10, 12. Felt easy..."
-                        disabled={activity.status === ActivityStatus.COMPLETE}
+                        disabled={
+                          initialData.status === ActivityStatus.COMPLETE
+                        }
                         {...field}
                       />
                     </FormControl>
@@ -98,23 +102,23 @@ export const ActivityUpdateModal: React.FC<ActivityUpdateModalProps> = ({
               <div className="flex w-full justify-center gap-2">
                 <Button
                   disabled={
-                    activity.status === ActivityStatus.COMPLETE || loading
+                    initialData.status === ActivityStatus.COMPLETE || loading
                   }
                   onClick={(event) => {
                     event.preventDefault();
                     closeModal();
                   }}
                   className="gap-2"
-                  variant={'outline'}
+                  variant={"outline"}
                 >
                   Add Note <Send className="h-5 w-5" />
                 </Button>
                 <Button
                   disabled={
-                    activity.status === ActivityStatus.COMPLETE || loading
+                    initialData.status === ActivityStatus.COMPLETE || loading
                   }
                   type="submit"
-                  className="gap-2 bg-lime-700 hover:bg-lime-600"
+                  className="gap-2 bg-emerald-600 hover:bg-emerald-600"
                 >
                   Add Note And Complete Activity
                   <CheckCircle className="h-5 w-5" />

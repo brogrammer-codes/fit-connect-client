@@ -8,9 +8,8 @@ import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Activity, Plan } from "types/client";
-import { ActivityUpdateModal } from "components/activity-update-modal";
+import { NoteUpdateModal } from "components/note-update-modal";
 import { ActivityStatus, PlanStatus } from "types/status";
-import { PlanUpdateModal } from "components/plan-update-modal";
 import { Button } from "components/ui/button";
 import { StatusPill } from "components/status-pill";
 
@@ -71,7 +70,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     }
   };
 
-  const closePlanModal = (complete: boolean) => {
+  const closePlanModal = (note: string, complete: boolean) => {
     updatePlan({
       clientId,
       planId,
@@ -84,30 +83,31 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
       <Head>
         <title>{plan.name}</title>
       </Head>
-      <ActivityUpdateModal
+      <NoteUpdateModal
         isOpen={!!activityModalControl}
         onClose={closeActivityModal}
-        activity={activityModalControl}
+        initialData={activityModalControl}
         loading={isLoading}
+        description="You can complete this activity once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the activity and leave feedback for your coach!"
       />
-      <PlanUpdateModal
+      <NoteUpdateModal
         isOpen={showPlanModal}
-        plan={plan}
-        onClose={() => closePlanModal(false)}
-        onConfirm={() => closePlanModal(true)}
-        updatePlanNote={(value) => setPlan({ ...plan, note: value })}
+        onClose={closePlanModal}
+        initialData={plan}
         loading={planLoading}
+        description="You can complete this plan once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the plan and leave feedback for your coach! Note: This will complete any activities in the plan as well."
       />
+
       <Link href={`/client/${clientId}`}>
         <ArrowLeftIcon />
       </Link>
       <div className="flex justify-between">
         <Heading title={plan.name} description={plan.description} />
-        <StatusPill status={plan.status}/>
+        <StatusPill status={plan.status} />
       </div>
       <ActivityDisplay plan={plan} openActivityModal={openActivityModal} />
       <span className="font-semibold">Plan Notes</span>
-              <span className="text-sm">{plan.note}</span>
+      <span className="text-sm">{plan.note}</span>
       <Button
         className=" rounded bg-emerald-600 p-2 font-semibold hover:bg-emerald-900 hover:text-neutral-300"
         disabled={plan.status === PlanStatus.COMPLETE}
