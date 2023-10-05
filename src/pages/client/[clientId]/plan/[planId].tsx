@@ -8,9 +8,8 @@ import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Activity, Plan } from "types/client";
-import { ActivityUpdateModal } from "components/activity-update-modal";
+import { NoteUpdateModal } from "components/note-update-modal";
 import { ActivityStatus, PlanStatus } from "types/status";
-import { PlanUpdateModal } from "components/plan-update-modal";
 import { Button } from "components/ui/button";
 import { StatusPill } from "components/status-pill";
 
@@ -50,17 +49,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     }
   }, [data]);
   if (!plan) return <div>No Plan Found</div>;
-  const updateActivityNote = (id: string, value: string) => {
-    const updatedActivityList = [...plan.activityList];
-    const index = updatedActivityList.findIndex((item) => item.id === id);
-    if (index !== -1 && updatedActivityList[index]) {
-      // why use a ! mark instead of a ?
-      // https://stackoverflow.com/questions/58414515/typescript-3-7beta-optional-chaining-operator-using-problem
-      updatedActivityList[index]!.note = value;
 
-      setPlan({ ...plan, activityList: [...updatedActivityList] });
-    }
-  };
   const openActivityModal = (id: string) => {
     const selectedActivity = plan.activityList.find(
       (activity) => activity.id === id,
@@ -68,12 +57,12 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     if (selectedActivity) setActivityModalControl(selectedActivity);
   };
 
-  const closeActivityModal = (complete: boolean) => {
+  const closeActivityModal = (note: string, complete: boolean) => {
     if (activityModalControl) {
       updateActivity({
         clientId,
         activityId: activityModalControl?.id,
-        note: activityModalControl.note ?? "",
+        note: note,
         status: complete
           ? ActivityStatus.COMPLETE
           : activityModalControl.status,
@@ -81,7 +70,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     }
   };
 
-  const closePlanModal = (complete: boolean) => {
+  const closePlanModal = (note: string, complete: boolean) => {
     updatePlan({
       clientId,
       planId,
@@ -94,32 +83,31 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
       <Head>
         <title>{plan.name}</title>
       </Head>
-      <ActivityUpdateModal
+      <NoteUpdateModal
         isOpen={!!activityModalControl}
-        onClose={() => closeActivityModal(false)}
-        onConfirm={() => closeActivityModal(true)}
-        updateActivityNote={updateActivityNote}
-        activity={activityModalControl}
+        onClose={closeActivityModal}
+        initialData={activityModalControl}
         loading={isLoading}
+        description="You can complete this activity once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the activity and leave feedback for your coach!"
       />
-      <PlanUpdateModal
+      <NoteUpdateModal
         isOpen={showPlanModal}
-        plan={plan}
-        onClose={() => closePlanModal(false)}
-        onConfirm={() => closePlanModal(true)}
-        updatePlanNote={(value) => setPlan({ ...plan, note: value })}
+        onClose={closePlanModal}
+        initialData={plan}
         loading={planLoading}
+        description="You can complete this plan once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the plan and leave feedback for your coach! Note: This will complete any activities in the plan as well."
       />
+
       <Link href={`/client/${clientId}`}>
         <ArrowLeftIcon />
       </Link>
       <div className="flex justify-between">
         <Heading title={plan.name} description={plan.description} />
-        <StatusPill status={plan.status}/>
+        <StatusPill status={plan.status} />
       </div>
       <ActivityDisplay plan={plan} openActivityModal={openActivityModal} />
       <span className="font-semibold">Plan Notes</span>
-              <span className="text-sm">{plan.note}</span>
+      <span className="text-sm">{plan.note}</span>
       <Button
         className=" rounded bg-emerald-600 p-2 font-semibold hover:bg-emerald-900 hover:text-neutral-300"
         disabled={plan.status === PlanStatus.COMPLETE}
