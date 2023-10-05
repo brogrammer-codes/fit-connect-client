@@ -24,7 +24,7 @@ export const ActivityDisplay: React.FC<{
         <Card key={activity.id} className="rounded border-none bg-slate-300 max-w-lg">
           <CardHeader className="flex flex-row justify-between">
             <div className="flex flex-col">
-              <CardTitle className="flex flex-row justify-between">
+              <CardTitle className="flex flex-row">
                 <span className="pr-2 font-semibold">{activity.name}</span>
                 {activity.videoUrl ? (
                   <Link href={activity.videoUrl} target="_blank">
