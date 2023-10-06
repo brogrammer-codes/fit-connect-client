@@ -12,6 +12,7 @@ import {
 } from "components/ui/card";
 import Link from "next/link";
 import { Heading } from "components/ui/heading";
+import moment from "moment";
 
 const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
   const { data } = api.clients.getClient.useQuery({ clientId });
@@ -81,8 +82,8 @@ const ClientPage: NextPage<{ clientId: string }> = ({ clientId }) => {
                 >
                   <Card className=" max-w-lg">
                     <CardHeader>
-                      <CardTitle className="text-md font-normal text-slate-600">
-                        {plan.name}
+                      <CardTitle className="text-md font-normal text-slate-600 flex justify-between">
+                        {plan.name} <span className="text-sm font-semibold text-slate-800">{moment(plan.updatedAt).fromNow()}</span>
                       </CardTitle>
                       <CardDescription>{plan.note}</CardDescription>
                     </CardHeader>
