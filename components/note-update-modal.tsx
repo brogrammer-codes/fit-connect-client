@@ -27,6 +27,7 @@ interface NoteUpdateModalProps {
   isOpen: boolean;
   onClose: (note: string, complete: boolean) => void;
   description: string;
+  placeholder?: string;
   loading?: boolean;
   initialData?: Activity | null | Plan;
 }
@@ -35,6 +36,7 @@ export const NoteUpdateModal: React.FC<NoteUpdateModalProps> = ({
   isOpen,
   onClose,
   loading,
+  placeholder,
   initialData,
   description,
 }) => {
@@ -70,7 +72,6 @@ export const NoteUpdateModal: React.FC<NoteUpdateModalProps> = ({
       onClose={closeModal}
     >
       <div>
-        <Label htmlFor="notes">Notes</Label>
         <Form {...form}>
           <form
             onSubmit={(event) => {
@@ -85,10 +86,10 @@ export const NoteUpdateModal: React.FC<NoteUpdateModalProps> = ({
                 name="note"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Notes</FormLabel>
                     <FormControl className="flex gap-2">
                       <Textarea
-                        placeholder="10, 10, 12. Felt easy..."
+                        placeholder={placeholder ?? "10, 10, 12. Felt easy..."}
                         disabled={
                           initialData.status === ActivityStatus.COMPLETE
                         }
@@ -111,7 +112,7 @@ export const NoteUpdateModal: React.FC<NoteUpdateModalProps> = ({
                   className="gap-2"
                   variant={"outline"}
                 >
-                  Add Note <Send className="h-5 w-5" />
+                  Add Note <Send className="h-4 w-4" />
                 </Button>
                 <Button
                   disabled={
@@ -120,8 +121,8 @@ export const NoteUpdateModal: React.FC<NoteUpdateModalProps> = ({
                   type="submit"
                   className="gap-2 bg-emerald-600 hover:bg-emerald-600"
                 >
-                  Add Note And Complete Activity
-                  <CheckCircle className="h-5 w-5" />
+                  Add Note + Complete
+                  <CheckCircle className="h-4 w-4" />
                 </Button>
               </div>
             </div>

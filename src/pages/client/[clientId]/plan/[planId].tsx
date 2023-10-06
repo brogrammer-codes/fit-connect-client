@@ -74,7 +74,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
     updatePlan({
       clientId,
       planId,
-      note: plan.note ?? "",
+      note: note,
       status: complete ? PlanStatus.COMPLETE : plan.status,
     });
   };
@@ -95,6 +95,7 @@ const ClientPlanPage: NextPage<{ clientId: string; planId: string }> = ({
         onClose={closePlanModal}
         initialData={plan}
         loading={planLoading}
+        placeholder="Felt around 7RPE for most of the activities except for..."
         description="You can complete this plan once you have finished it, you can add notes and close the modal to save any notes before completing it. Once you are done, you can hit send to complete the plan and leave feedback for your coach! Note: This will complete any activities in the plan as well."
       />
 
